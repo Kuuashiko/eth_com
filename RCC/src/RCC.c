@@ -21,3 +21,9 @@ void RCC_enable_eth_clock(t_RCC_registers *RCC_drv)
 {
 	RCC_drv->RCC_AHB1ENR |= 0x0E000000U;
 }
+
+/* Enable bits  required of RCC_AHB1 register to enable the GPIO Banks A to K*/
+void RCC_enable_gpio_clock(t_RCC_registers *RCC_drv, uint32_t i_value)
+{
+	RCC_drv->RCC_AHB1ENR |= i_value & 0x000007FFU;
+}

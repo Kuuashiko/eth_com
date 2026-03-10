@@ -5,13 +5,13 @@
  *      Author: milko
  */
 
-#ifndef INC_SYSCFG_H_
-#define INC_SYSCFG_H_
+#ifndef INC_GPIO_H_
+#define INC_GPIO_H_
 #include "stdio.h"
 #include "sys/types.h"
 /* Locals Constants */
 
-#define D_SYSCFG_ADDR                    0x40020000U
+#define D_GPIO_ADDR                    0x40020000U
 
 #define D_OFFSET_MODE_SPEED_PUPD0        0U
 #define D_OFFSET_MODE_SPEED_PUPD1        2U
@@ -142,10 +142,10 @@ typedef enum alt_func{
 	E_AF12,
 	E_AF13,
 	E_AF14,
-	E_AF15,
+	E_AF15
 }t_ALT_FUNCT_mode;
 
-/* Struct RCC register map */
+/* Struct GPIOx register map */
 typedef struct GPIOx_registers {
 	uint32_t MODER;
 	uint32_t OTYPER;
@@ -160,6 +160,7 @@ typedef struct GPIOx_registers {
 	uint32_t reserved[246];
 }t_GPIOx_registers;
 
+/* Mapping of all GPIO availabale on f746 A to K*/
 typedef struct GPIO_Bank {
 	t_GPIOx_registers GPIOA;
     t_GPIOx_registers GPIOB;
@@ -180,4 +181,4 @@ typedef struct GPIO_Bank {
 void GPIO_init_ETH(t_GPIO_Bank *GPIOs);
 
 
-#endif /* INC_RCC_H_ */
+#endif /* INC_GPIO_H_ */

@@ -7,8 +7,17 @@ int main()
 
 	t_RCC_registers *RCC_map = (t_RCC_registers *)D_RCC_ADDR;
     t_SYSCFG_registers *SYSCFG_map = (t_SYSCFG_registers *)D_SYSCFG_ADDR;
-
-    RCC_set_RCC_CR(RCC_map,0x00000001);
+    t_GPIO_Bank *GPIO_Bank = (t_GPIO_Bank *)D_GPIO_ADDR;
+    
+    GPIO_init_ETH(GPIO_Bank);
+    RCC_enable_gpio_clock(RCC_map, 0x00000007U); /* Enable GPIOA, GPIOB and GPIOC clock */
     SYSCFG_set_RMII_ETH(SYSCFG_map);
+    RCC_enable_eth_clock(RCC_map);
+    
+    uint32_t dmabmr = *(uint32_t *)0x40029000U;
+    uint32_t *macmiiar = (uint32_t *) 0x40028010U;
+    *macmiiar = 0x840U;
+    uint32_t macmiidr = *(uint32_t *)0x40028014U;
+    
 return 0;
 }
