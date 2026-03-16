@@ -9,8 +9,9 @@ int main()
     t_SYSCFG_registers *SYSCFG_map = (t_SYSCFG_registers *)D_SYSCFG_ADDR;
     t_GPIO_Bank *GPIO_Bank = (t_GPIO_Bank *)D_GPIO_ADDR;
     
+    RCC_enable_gpio_clock(RCC_map, 0x00000047U); /* Enable GPIOA, GPIOB, GPIOC & GPIOG clock */
+    RCC_enable_SYSCFG_clock(RCC_map);/* Enable write in SYSCFG register */
     GPIO_init_ETH(GPIO_Bank);
-    RCC_enable_gpio_clock(RCC_map, 0x00000007U); /* Enable GPIOA, GPIOB and GPIOC clock */
     SYSCFG_set_RMII_ETH(SYSCFG_map);
     RCC_enable_eth_clock(RCC_map);
     
