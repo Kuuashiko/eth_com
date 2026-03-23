@@ -1,3 +1,8 @@
+/* Librairies */
+#include "memory.h"
+
+
+/* header customs */
 #include "RCC.h"
 #include "SYSCFG.h"
 #include "GPIO.h"

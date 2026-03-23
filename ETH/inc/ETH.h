@@ -7,8 +7,8 @@
 
 #ifndef INC_ETH_H_
 #define INC_ETH_H_
-#include "stdio.h"
 #include "sys/types.h"
+#include "memory.h"
 
 /* Macros */
 #define M_Swap16(word_16)   (                      \
@@ -17,17 +17,18 @@
                             )
 
 #define M_Swap32(word_32)   (                                     \
-                                ((word_32) << 24) & 0xFF000000U | \
-                                ((word_32) << 8)  & 0x00FF0000U | \
-                                ((word_32) >> 8)  & 0x0000FF00U | \
-                                ((word_32) >> 24) & 0x000000FFU   \
+                                (((word_32) << 24) & 0xFF000000U )| \
+                                (((word_32) << 8)  & 0x00FF0000U )| \
+                                (((word_32) >> 8)  & 0x0000FF00U )| \
+                                (((word_32) >> 24) & 0x000000FFU )  \
                             )
 
 
 /* Locals Constants */
 #define D_ETH_ADDR                    0x40028000U
-
-
+#define D_HEADER_LENGTH    42U /* Ethernet header (14 bytes) + IP header (20 bytes) + UDP header (8 bytes) */
+#define D_BUFFER_SEND_ADDR 0x2004D000U /* Address of the send buffer */
+#define D_BUFFER_RECEIVE_ADDR 0x2004E000U /* Address of the receive buffer */
 
 /* MAC mapping*/
 typedef struct MAC_regs {
@@ -135,13 +136,11 @@ typedef struct HEAD_ETH_UDP {
     uint16_t mac_dest[3];
     uint16_t mac_source[3];
     uint16_t protocol;
-    uint8_t version_ihl;
-    uint8_t dsc_esn;
+    uint16_t ihl_dsc_esn;
     uint16_t total_length;
     uint16_t identification;
     uint16_t flags_offset;
-    uint8_t ttl;
-    uint8_t protocol_ip;
+    uint16_t ttl_prot_ip;
     uint16_t header_checksum;
     uint32_t ip_src;
     uint32_t ip_dest;
@@ -154,16 +153,18 @@ typedef struct HEAD_ETH_UDP {
 
 typedef struct FRAME_ETH {
     t_HEAD_ETH_UDP head_eth_udp;
-    uint8_t *payload;   /* Pointer to the payload data, can be up to 1472 bytes for Ethernet frames */
+    uint8_t payload[1472];   /* Pointer to the payload data, can be up to 1472 bytes for Ethernet frames */
 }t_FRAME_ETH;   
 
-/* Extern variables */
-extern t_HEAD_ETH_UDP head_eth_udp;
+
 
 /* public functions prototypes */
 void ETH_conf(t_ETH_regs *ETH_regs);
 void set_mac_params (t_MAC_regs *MAC);
 void init_desc_eth(t_TX_descriptor *TX_DSC, t_RX_descriptor *RX_DSC, uint8_t *ETH_SEND, uint8_t *ETH_RECEIVE );
 void set_dma_config (t_DMA_regs *DMA,t_TX_descriptor *TX_DSC, t_RX_descriptor *RX_DSC);
+void set_bytes_frame_eth_udp(uint16_t *i_base_addr_frame, uint32_t i_frame_length);
+void set_payload_send_eth(uint32_t i_length_payload);
+
 
 #endif /* INC_ETH_H_ */
