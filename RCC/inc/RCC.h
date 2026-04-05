@@ -7,11 +7,16 @@
 
 #ifndef INC_RCC_H_
 #define INC_RCC_H_
-#include "stdio.h"
 #include "sys/types.h"
+#include "localtypes.h"
 /* Locals Constants */
 
-#define D_RCC_ADDR      0x40023800U
+#define D_RCC_ADDR         0x40023800U
+
+#define D_MASK_GPIOx       0x000007FFU /* GPIO are on bits 0 to 10 in ahb1enr register*/
+#define D_MASK_ETH_clk     0x1E000000U /* ETH clocks are on bits 25 to 28 in ahb1enr register*/
+#define D_MASK_TIMER_x     0x0000000FU /* Timer clocks are on bits 0 to 8 in apb1enr register, but only 2 to 5 (bit 0 to 3) mapped*/
+#define D_BIT_SYSCFG_reg   0x00004000U /* Bit of SYSCFGEN register in apb2enr register*/
 
 /* Struct RCC register map */
 typedef struct RCC_registers {
@@ -48,12 +53,41 @@ typedef struct RCC_registers {
 	uint32_t RCC_PLLSAICFGR;
 	uint32_t RCC_DCKCFGR1;
 	uint32_t RCC_DCKCFGR2;
-}t_RCC_registers;
+}t_RCC_registers_s;
+
+typedef enum GPIOx {
+	E_GPIOA = D_BIT_0,
+	E_GPIOB = D_BIT_1,
+	E_GPIOC = D_BIT_2,
+	E_GPIOD = D_BIT_3,
+	E_GPIOE = D_BIT_4,
+	E_GPIOF = D_BIT_5,
+	E_GPIOG = D_BIT_6,
+	E_GPIOH = D_BIT_7,
+	E_GPIOI = D_BIT_8,
+	E_GPIOJ = D_BIT_9,
+	E_GPIOK = D_BIT_10
+}enum_GPIO_x;
+
+typedef enum ETH_clocks{
+	E_ETH_MACEN = D_BIT_25,
+	E_ETH_MACTXEN = D_BIT_26,
+	E_ETH_MACRXEN = D_BIT_27,
+	E_ETH_PTPEN = D_BIT_28
+}enum_ETH_clk;
+
+typedef enum TIMER_id{
+	E_TIMER_2 = D_BIT_0,
+	E_TIMER_3 = D_BIT_1,
+	E_TIMER_4 = D_BIT_2,
+	E_TIMER_5 = D_BIT_3
+}enum_TIMER_x;
+
 
 /* Public functions prototypes */
 
-void RCC_set_RCC_CR(t_RCC_registers *RCC_drv, uint32_t value);
-void RCC_enable_eth_clock(t_RCC_registers *RCC_drv);
-void RCC_enable_SYSCFG_clock(t_RCC_registers *RCC_drv);
-void RCC_enable_gpio_clock(t_RCC_registers *RCC_drv, uint32_t i_value);
+void RCC_enable_eth_clock(t_RCC_registers_s *io_RCC_drv, enum_ETH_clk i_ETH_clk);
+void RCC_enable_SYSCFG_clock(t_RCC_registers_s *io_RCC_drv);
+void RCC_enable_gpio_clock(t_RCC_registers_s *io_RCC_drv, enum_GPIO_x i_gpio);
+void RCC_enable_timer_clock(t_RCC_registers_s *io_RCC_drv, enum_TIMER_x i_timer_x);
 #endif /* INC_RCC_H_ */

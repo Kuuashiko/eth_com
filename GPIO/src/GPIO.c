@@ -1,20 +1,24 @@
 /*
- * RCC.c
+ * GPIO.c
  *
  *  Created on: 4 mars 2026
  *      Author: milko
  */
 #include "GPIO.h"
  
-/* Locals Constants */
-#define D_BIT_MII_RMII_SEL 23U
-#define D_RMII_VALUE       1U   
 
-
-/* Local Types */
+/* private functions prototypes */
+void set_alternate_function_mode (t_GPIO_Bank_s *GPIOs);
+void set_speed_mode (t_GPIO_Bank_s *GPIOs);
+void set_num_alt_function(t_GPIO_Bank_s *GPIOs);
 
 /* Private functions */
-void set_alternate_function_mode (t_GPIO_Bank *GPIOs)
+
+/**
+ * @brief set_alternate_function_mode
+ * set the gpio in alternate function mode for eth in rmii, necssary to set the mode number in AFLR/AFHR registers
+ **/
+void set_alternate_function_mode (t_GPIO_Bank_s *GPIOs)
 {
 	GPIOs->GPIOA.MODER |= E_ALT_FUNCT << D_OFFSET_MODE_SPEED_PUPD1;
 	GPIOs->GPIOA.MODER |= E_ALT_FUNCT << D_OFFSET_MODE_SPEED_PUPD2;
@@ -27,7 +31,12 @@ void set_alternate_function_mode (t_GPIO_Bank *GPIOs)
 	GPIOs->GPIOC.MODER |= E_ALT_FUNCT << D_OFFSET_MODE_SPEED_PUPD5;
 }
 
-void set_speed_mode (t_GPIO_Bank *GPIOs)
+
+/**
+ * @brief set_speed_mode
+ * set the gpio speed mode for eth mode in rmii
+ **/
+void set_speed_mode (t_GPIO_Bank_s *GPIOs)
 {
 	GPIOs->GPIOA.OSPEEDR |= E_VERY_HIGH_SPEED << D_OFFSET_MODE_SPEED_PUPD1;
 	GPIOs->GPIOA.OSPEEDR |= E_VERY_HIGH_SPEED << D_OFFSET_MODE_SPEED_PUPD2;
@@ -40,12 +49,13 @@ void set_speed_mode (t_GPIO_Bank *GPIOs)
 	GPIOs->GPIOC.OSPEEDR |= E_VERY_HIGH_SPEED << D_OFFSET_MODE_SPEED_PUPD5;
 }
 
-void set_io_ph0 (t_GPIO_Bank *GPIOs)
-{
-	GPIOs->GPIOH.BSRR |= E_SET_RESET << D_OFFSET_SET_RESET0;
-}
 
-void set_num_alt_function(t_GPIO_Bank *GPIOs)
+
+/**
+ * @brief set_num_alt_function
+ * set the alternate function number for eth mode in rmii
+ **/
+void set_num_alt_function(t_GPIO_Bank_s *GPIOs)
 {
 	GPIOs->GPIOA.AFLR |= E_AF11 << D_OFFSET_ALTERNATE_FUNCTION1_9;
 	GPIOs->GPIOA.AFLR |= E_AF11 << D_OFFSET_ALTERNATE_FUNCTION2_10;
@@ -60,25 +70,43 @@ void set_num_alt_function(t_GPIO_Bank *GPIOs)
 /* Public functions */
 //0b10
 
-/* --------------------------------------------------*/
-/* Brief GPIO_init_ETH   */
-/* set the GPIO for RMII mode CF Table 12 DS10916.   */
-/*                                                   */
-/* ETH_RMII_REF_CLK --> GPIO A Port 1                */
-/* ETH_MDIO         --> GPIO A Port 2                */
-/* ETH_RMII_CRS_DV  --> GPIO A Port 7                */  
-/* ETH_RMII_TX_EN   --> GPIO B Port 11               */  
-/* ETH_RMII_TXD0    --> GPIO B Port 12               */  
-/* ETH_RMII_TXD1    --> GPIO B Port 13               */ 
-/* ETH_RMII_RXD0    --> GPIO C Port 4                */  
-/* ETH_RMII_RXD1    --> GPIO C Port 5                */  
-/*                                                   */ 
-/*---------------------------------------------------*/
-
-
-void GPIO_init_ETH(t_GPIO_Bank *GPIOs)
+/** 
+* @brief GPIO_init_ETH   
+* set the GPIO for ETH RMII mode CF Table 12 DS10916.   
+*                                                   
+* - ETH_RMII_REF_CLK --> GPIO A Port 1              
+*
+* - ETH_MDIO         --> GPIO A Port 2                
+*
+* - ETH_RMII_CRS_DV  --> GPIO A Port 7               
+*
+* - ETH_RMII_TX_EN   --> GPIO G Port 11              
+*
+* - ETH_RMII_TXD0    --> GPIO G Port 13               
+*
+* - ETH_RMII_TXD1    --> GPIO G Port 14               
+*
+* - ETH_RMII_RXD0    --> GPIO C Port 4             
+*
+* - ETH_RMII_RXD1    --> GPIO C Port 5                
+*  
+*
+* For a valid eth conf, the GPIOs list above should be set as follow :
+*
+* - Alternate function mode
+*
+* - Very high speed
+*
+* - AF11 for all pins
+*
+* @param[in,out] io_GPIOs : pointer to the GPIO bank structure 
+*
+* @return void             
+*    
+**/
+void GPIO_init_ETH(t_GPIO_Bank_s *io_GPIOs)
 {
-	set_alternate_function_mode(GPIOs);
-	set_speed_mode(GPIOs);
-	set_num_alt_function(GPIOs);	
+	set_alternate_function_mode(io_GPIOs);
+	set_speed_mode(io_GPIOs);
+	set_num_alt_function(io_GPIOs);	
 }

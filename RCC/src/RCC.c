@@ -10,26 +10,68 @@
 
 /* Public functions */
 
-void RCC_set_RCC_CR(t_RCC_registers *RCC_drv, uint32_t value){
 
-	RCC_drv->RCC_CR = value;
-
+/**
+ * @brief RCC_enable_eth_clock
+ * 
+ * - Enable selected bit of RCC_AHB1 register to enable the ethernet clocks, bits 25 to 28
+ * 
+ * @param [in,out] io_RCC_drv : pointer to RCC registers
+ * @param [in] i_ETH_clk : ETH param required to be set 
+ * 
+ * @return void
+ * 
+ **/
+void RCC_enable_eth_clock(t_RCC_registers_s *io_RCC_drv, enum_ETH_clk i_ETH_clk)
+{
+	io_RCC_drv->RCC_AHB1ENR |= i_ETH_clk & D_MASK_ETH_clk;
 }
 
-/* Enable bit 25, 26 et 27 of RCC_AHB1 register to enable the ethernet clocks */
-void RCC_enable_eth_clock(t_RCC_registers *RCC_drv)
+/**
+ * @brief RCC_enable_eth_clock
+ * 
+ * - Enable bits  required of RCC_AHB1 register to enable the GPIO Banks A to K (GPIO are on bits 0 to 10)
+ * 
+ * @param [in,out] io_RCC_drv : pointer to RCC registers
+ * @param [in] i_gpio : GPIO bank required to be set 
+ * 
+ * @return void
+ * 
+ **/
+void RCC_enable_gpio_clock(t_RCC_registers_s *io_RCC_drv,enum_GPIO_x i_gpio)
 {
-	RCC_drv->RCC_AHB1ENR |= 0x0E000000U;
+	io_RCC_drv->RCC_AHB1ENR |=  i_gpio & D_MASK_GPIOx;
 }
 
-/* Enable bits  required of RCC_AHB1 register to enable the GPIO Banks A to K*/
-void RCC_enable_gpio_clock(t_RCC_registers *RCC_drv, uint32_t i_value)
+
+/**
+ * @brief RCC_enable_eth_clock
+ * 
+ * - Enable write in SYSCFG register
+ * 
+ * @param [in,out] io_RCC_drv : pointer to RCC registers
+ * 
+ * @return void
+ * 
+ **/
+void RCC_enable_SYSCFG_clock(t_RCC_registers_s *io_RCC_drv)
 {
-	RCC_drv->RCC_AHB1ENR |= i_value & 0x000007FFU;
+	io_RCC_drv->RCC_APB2ENR |= D_BIT_SYSCFG_reg;
 }
 
-/* Enable bit 25, 26 et 27 of RCC_AHB1 register to enable the ethernet clocks */
-void RCC_enable_SYSCFG_clock(t_RCC_registers *RCC_drv)
+
+/**
+ * @brief RCC_enable_eth_clock
+ * 
+ * - Enable selected bits of apb1enr register to enable the timer, 2 to 7 and 12 to 14 are available but only 2 to 5 has been mapped
+ * 
+ * @param [in,out] io_RCC_drv : pointer to RCC registers
+ * @param [in] i_timer_x : Timer number required to be set 
+ * 
+ * @return void
+ * 
+ **/
+void RCC_enable_timer_clock(t_RCC_registers_s *io_RCC_drv, enum_TIMER_x i_timer_x)
 {
-	RCC_drv->RCC_APB2ENR |= 0x00004000U;
+	io_RCC_drv->RCC_APB1ENR |= i_timer_x & D_MASK_TIMER_x;
 }

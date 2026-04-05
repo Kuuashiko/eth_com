@@ -1,5 +1,5 @@
 /*
- * RCC.h
+ * GPIO.h
  *
  *  Created on: 4 mars 2026
  *      Author: milko
@@ -96,35 +96,16 @@ typedef enum mode{
 	E_GEN_PURP_OUT,
 	E_ALT_FUNCT,
 	E_ANALOG
-}t_MODER_mode;
+}enum_MODER_mode;
 
-typedef enum type{
-	E_PUSH_PULL,
-	E_OPEN_DRAIN
-}t_TYPER_mode;
 
 typedef enum speed{
 	E_LOW_SPEED,
 	E_MED_SPEED,
 	E_HIGH_SPEED,
 	E_VERY_HIGH_SPEED
-}t_SPEED_mode;
+}enum_SPEED_mode;
 
-typedef enum up_down{
-	E_NO_PULLUP_PULLDOWN,
-	E_PULLUP,
-	E_PULLDOWN
-}t_PUPDR_mode;
-
-typedef enum odr{
-	E_NO_ACTION,
-	E_SET_RESET,
-}t_ODR_mode;
-
-typedef enum lock{
-	E_UNLOCK,
-	E_LOCK
-}t_LOCK_mode;
 
 typedef enum alt_func{
 	E_AF0,
@@ -143,7 +124,7 @@ typedef enum alt_func{
 	E_AF13,
 	E_AF14,
 	E_AF15
-}t_ALT_FUNCT_mode;
+}enum_ALT_FUNCT_mode;
 
 /* Struct GPIOx register map */
 typedef struct GPIOx_registers {
@@ -158,27 +139,27 @@ typedef struct GPIOx_registers {
 	uint32_t AFLR;
 	uint32_t AFHR;
 	uint32_t reserved[246];
-}t_GPIOx_registers;
+}t_GPIOx_registers_s;
 
 /* Mapping of all GPIO availabale on f746 A to K*/
 typedef struct GPIO_Bank {
-	t_GPIOx_registers GPIOA;
-    t_GPIOx_registers GPIOB;
-	t_GPIOx_registers GPIOC;
-	t_GPIOx_registers GPIOD;
-	t_GPIOx_registers GPIOE;
-	t_GPIOx_registers GPIOF;
-	t_GPIOx_registers GPIOG;
-	t_GPIOx_registers GPIOH;
-	t_GPIOx_registers GPIOI;
-	t_GPIOx_registers GPIOJ;
-	t_GPIOx_registers GPIOK;
-}t_GPIO_Bank;
+	t_GPIOx_registers_s GPIOA;
+    t_GPIOx_registers_s GPIOB;
+	t_GPIOx_registers_s GPIOC;
+	t_GPIOx_registers_s GPIOD;
+	t_GPIOx_registers_s GPIOE;
+	t_GPIOx_registers_s GPIOF;
+	t_GPIOx_registers_s GPIOG;
+	t_GPIOx_registers_s GPIOH;
+	t_GPIOx_registers_s GPIOI;
+	t_GPIOx_registers_s GPIOJ;
+	t_GPIOx_registers_s GPIOK;
+}t_GPIO_Bank_s;
 
 
 /* Public functions prototypes */
 
-void GPIO_init_ETH(t_GPIO_Bank *GPIOs);
+void GPIO_init_ETH(t_GPIO_Bank_s *io_GPIOs);
 
 
 #endif /* INC_GPIO_H_ */

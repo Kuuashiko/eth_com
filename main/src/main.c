@@ -1,70 +1,65 @@
+/*
+ * main.c
+ *
+ *  Created on: 4 mars 2026
+ *      Author: milko
+ */
+
 #include "746.h"
-
-#define D_FRAME_ETH_LENGTH 1514U
-
-static t_TX_descriptor *TX_DESC = (t_TX_descriptor *)0x2004C000U;
-static t_RX_descriptor *RX_DESC = (t_RX_descriptor *)0x2004C020U;
-
-
-uint8_t *Buff_ETH_SEND = (uint8_t *)D_BUFFER_SEND_ADDR;
-uint8_t *Buff_ETH_RECEIVE = (uint8_t *)D_BUFFER_RECEIVE_ADDR;
-
-t_FRAME_ETH ETH_send;
-t_FRAME_ETH ETH_receive;
-
-
-/* Private functions*/
 
 
 
 
 int main()
 {
+    t_TIMER_Bank_s *TIMER_Bank = (t_TIMER_Bank_s *)D_TIMER_ADDR;
+    t_ETH_regs_s *ETH_map = (t_ETH_regs_s *)D_ETH_ADDR;
+    t_COMMAND_s command;
+    t_DATA_s data_to_send;
+    data_to_send.data = M_Swap32(D_PING_HEX_VALUE); /* "PING" in ASCII */
+    uint32_t time_send = 0, prescaler =0;
 
-	t_RCC_registers *RCC_map = (t_RCC_registers *)D_RCC_ADDR;
-    t_SYSCFG_registers *SYSCFG_map = (t_SYSCFG_registers *)D_SYSCFG_ADDR;
-    t_GPIO_Bank *GPIO_Bank = (t_GPIO_Bank *)D_GPIO_ADDR;
-    t_ETH_regs *ETH_map = (t_ETH_regs *)D_ETH_ADDR;
+    boot();
 
-
-
-    memset(&ETH_send, 0x00, sizeof(t_FRAME_ETH));
-    memset(&ETH_receive, 0x00, sizeof(t_FRAME_ETH));
-    memset(Buff_ETH_SEND, 0x00, D_FRAME_ETH_LENGTH);
-    memset(Buff_ETH_RECEIVE, 0x00, D_FRAME_ETH_LENGTH);
-    uint32_t data = M_Swap32(0x50494E47U); /* "PING" in ASCII */
+    ETH_set_payload((uint8_t*)&data_to_send ,sizeof(t_DATA_s));
+    ETH_set_frame_length(sizeof(t_DATA_s)); /* Set the frame length in the Ethernet header and TDES1 */
+    memset(&command, 0x00, sizeof(t_COMMAND_s));
     
-    RCC_enable_gpio_clock(RCC_map, 0x00000047U); /* Enable GPIOA, GPIOB, GPIOC & GPIOG clock */
-    RCC_enable_SYSCFG_clock(RCC_map);/* Enable write in SYSCFG register */
-    GPIO_init_ETH(GPIO_Bank);
-    SYSCFG_set_RMII_ETH(SYSCFG_map);
-    RCC_enable_eth_clock(RCC_map);
-    ETH_conf(ETH_map);
-    init_desc_eth(TX_DESC, RX_DESC, (uint8_t *)Buff_ETH_SEND, (uint8_t *)Buff_ETH_RECEIVE);
-    set_dma_config(&ETH_map->DMA, TX_DESC, RX_DESC);
 
-
-    memcpy(ETH_send.payload, &data, sizeof(data));
-    ETH_send.head_eth_udp.length = M_Swap16(D_HEADER_LENGTH + (sizeof(data)-20)); /* Length of UDP payload (total length - IP header) */
-    ETH_send.head_eth_udp.total_length = M_Swap16(D_HEADER_LENGTH + sizeof(data)); /* Total length of the UDP packet (IP header + UDP header + payload) */
-    TX_DESC->TDES1 |= D_HEADER_LENGTH + sizeof(data); /* Set the frame length in TDES1 */
-    //set_bytes_frame_eth_udp((uint16_t *)ETH_send, D_HEADER_LENGTH + sizeof(data) ); /* Set the bytes of the frame in Big endian to the length of the UDP payload */
-    set_payload_send_eth(sizeof(data)); /* Prepare the buffer to send with the header and the payload */
-    
-    while (1) {
-        if ( ( (TX_DESC->TDES0 & 0x80000000) >> 31 ) == 0)
+    while (1)
+    {
+        if (ETH_get_receive_flag() == 1)
         {
-            TX_DESC->TDES0 |= 0x80000000U; /* Send frame */
-        	ETH_map->DMA.TPDR = 1;
-        }
+            ETH_get_payload((uint8_t*)&command,sizeof(t_COMMAND_s));
+            uint32_t cnt_msg = 0;
 
+            TIMER_compute_prescaler(command.delay, &prescaler); /* Compute the prescaler value for the specified delay */
+            TIMER_init(&TIMER_Bank->TIM2, prescaler, D_MAX_UINT32); /* Initialize timer to count by ms*/
+            TIMER_start(&TIMER_Bank->TIM2); /* Start timer */
+            while ((cnt_msg) < command.nb_msg)
+            { 
+                if (ETH_get_receive_flag() == 1) /* Check if a new frame has been received during the delay */
+                {
+                    ETH_get_payload((uint8_t*)&command,sizeof(t_COMMAND_s));
+                    if (command.stop == 1)
+                    {
+                        break; /* Stop sending frames if the stop flag is set */
+                    }
+                }
+                if ((TIMER_get_value(&TIMER_Bank->TIM2) - time_send) >= D_PERIOD_TICKS)  /* Check if the frame has been sent and if 100 ticks has passed delay of 100 ticks depends on frame input*/
+                {
+                    data_to_send.cnt = M_Swap32(cnt_msg);
+                    ETH_set_own_DMA_TX_DESC(); /* Tell DMA that frame is ready to send */
+                    ETH_set_payload((uint8_t*)&data_to_send,sizeof(t_DATA_s));
+                	time_send = TIMER_get_value(&TIMER_Bank->TIM2);  /* Get the current timer count */
+                	cnt_msg++;
+                   	ETH_send_frame(&ETH_map->DMA);
+                }
+            }
+            TIMER_reset(&TIMER_Bank->TIM2); // Reset Timer
+        }
     }
 
-
-    //uint32_t dmabmr = *(uint32_t *)0x40029000U;
-    //uint32_t *macmiiar = (uint32_t *) 0x40028010U;
-    //*macmiiar = 0x840U;
-    //uint32_t macmiidr = *(uint32_t *)0x40028014U;
     
-return 0;
+    return 0;
 }
