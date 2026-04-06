@@ -275,7 +275,7 @@ uint32_t ETH_get_receive_flag(void)
 void ETH_IRQHandler(void)
 {
     t_ETH_regs_s *ETH_map = (t_ETH_regs_s *)D_ETH_ADDR;
-    ETH_map->DMA.SR |= ( E_BIT_ENABLE << D_OFFSET_RS_DMAOMR ); /* Clear the receive flag */
+    ETH_map->DMA.SR = ( E_BIT_ENABLE << D_OFFSET_RS_DMAOMR ); /* Clear the receive flag */
     if (M_Swap16(ETH_receive->head_eth_udp.udp_dest) == D_UDP_DEST_CMD)
     {
         frame_received=1;
