@@ -81,7 +81,7 @@ uint32_t TIMER_get_value(t_TIMERx_registers_s *io_TIMx)
 void TIMER_reset(t_TIMERx_registers_s *io_TIMx)
 {
     io_TIMx->PSC = D_RESET_VALUE; /* Reset prescaler */
-    io_TIMx->CR1 |= ~D_CEN_BIT; /* reset the CEN bit to stop the timer */
+    io_TIMx->CR1 &= ~D_CEN_BIT; /* reset the CEN bit to stop the timer */
     io_TIMx->CNT = D_RESET_VALUE; /* Reset timer count */
 }
 

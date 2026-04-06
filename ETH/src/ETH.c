@@ -14,8 +14,8 @@ t_TX_descriptor_s *TX_DESC = (t_TX_descriptor_s *)D_ADDR_DSC_TX;
 t_RX_descriptor_s *RX_DESC = (t_RX_descriptor_s *)D_ADDR_DSC_RX;
 t_FRAME_ETH_s *ETH_send = (t_FRAME_ETH_s *)D_BUFFER_SEND_ADDR;
 t_FRAME_ETH_s *ETH_receive = (t_FRAME_ETH_s *)D_BUFFER_RECEIVE_ADDR;
-uint32_t frame_received;
-uint8_t payload_save[D_MAX_PAYLOAD_SIZE];
+static volatile uint32_t frame_received;
+static uint8_t payload_save[D_MAX_PAYLOAD_SIZE];
 
 /* Private functions prototypes */
 void set_mac_params (t_MAC_regs_s *io_MAC);
@@ -233,7 +233,7 @@ void ETH_send_frame(t_DMA_regs_s *io_DMA)
 **/ 
 void ETH_set_own_DMA_TX_DESC(void)
 {
-    TX_DESC->TDES0 |= E_BIT_ENABLE << D_OFFSET_TDES0_OWN;
+    TX_DESC->TDES0 |= ( E_BIT_ENABLE << D_OFFSET_TDES0_OWN );
 }
 
 /** 
@@ -275,7 +275,7 @@ uint32_t ETH_get_receive_flag(void)
 void ETH_IRQHandler(void)
 {
     t_ETH_regs_s *ETH_map = (t_ETH_regs_s *)D_ETH_ADDR;
-    ETH_map->DMA.SR |= E_BIT_ENABLE << D_OFFSET_RS_DMAOMR; /* Clear the receive flag */
+    ETH_map->DMA.SR |= ( E_BIT_ENABLE << D_OFFSET_RS_DMAOMR ); /* Clear the receive flag */
     if (M_Swap16(ETH_receive->head_eth_udp.udp_dest) == D_UDP_DEST_CMD)
     {
         frame_received=1;

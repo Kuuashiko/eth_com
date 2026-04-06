@@ -31,9 +31,13 @@ int main()
         if (ETH_get_receive_flag() == 1)
         {
             ETH_get_payload((uint8_t*)&command,sizeof(t_COMMAND_s));
-            uint32_t cnt_msg = 0;
+            uint32_t cnt_msg = 0, valid_delay=0;
 
-            TIMER_compute_prescaler(command.delay, &prescaler); /* Compute the prescaler value for the specified delay */
+            valid_delay = TIMER_compute_prescaler(command.delay, &prescaler); /* Compute the prescaler value for the specified delay */
+            if (valid_delay == E_STATUS_ERROR)
+            {
+                cnt_msg=D_MAX_UINT32; // put cnt_msg to max int32 to avois send message because of wrong input delay
+            }
             TIMER_init(&TIMER_Bank->TIM2, prescaler, D_MAX_UINT32); /* Initialize timer to count by ms*/
             TIMER_start(&TIMER_Bank->TIM2); /* Start timer */
             while ((cnt_msg) < command.nb_msg)
