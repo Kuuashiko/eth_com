@@ -11,7 +11,7 @@
 /**
  * @brief boot
  * 
- * Configure material configuration to have ethernet communication
+ * Configure hardware configuration to have ethernet communication
  * 
  * @param void
  * 
