@@ -14,7 +14,7 @@
 #define D_ETH_HEADER_SIZE               14U /* Ethernet header size in bytes */
 #define D_IP_HEADER_SIZE                20U /* IP header size in bytes */
 #define D_UDP_HEADER_SIZE               8U  /* UDP header size in bytes */
-#define D_HEADER_LENGTH                 D_ETH_HEADER_SIZE + D_IP_HEADER_SIZE + D_UDP_HEADER_SIZE /* Ethernet header (14 bytes) + IP header (20 bytes) + UDP header (8 bytes) */
+#define D_HEADER_LENGTH                 (D_ETH_HEADER_SIZE + D_IP_HEADER_SIZE + D_UDP_HEADER_SIZE) /* Ethernet header (14 bytes) + IP header (20 bytes) + UDP header (8 bytes) */
 #define D_BUFFER_SEND_ADDR              0x2004D000U /* Address of the send buffer */
 #define D_BUFFER_RECEIVE_ADDR           0x2004E000U /* Address of the receive buffer */
 #define D_IP_HEADER_LENGTH              20U
@@ -24,6 +24,7 @@
 #define D_MAX_PAYLOAD_SIZE              1472U
 
 /* Offsets for ETH registers used*/
+/* MAC register description : 38.8.1*/
 /* ETH_MACCR*/
 #define D_OFFSET_RE_MACCR               2U /* bit for enable Receive*/
 #define D_OFFSET_TE_MACCR               3U /* bit for enable Transmit*/
@@ -34,6 +35,7 @@
 #define D_OFFSET_PAM_MACFFR             4U /* bit for receive multicast  */
 #define D_OFFSET_PA_MACFFR              31U /* bit for receive all  */
 
+/* DMA register description : 38.8.4*/
 /* ETH_DMAOMR */
 #define D_OFFSET_SR_DMAOMR              1U /* bit for start/stop reception of frames */
 #define D_OFFSET_ST_DMAOMR              13U /* bit for start/stop transmission of frames */
@@ -48,9 +50,9 @@
 
 /* IP/UDP Constants */
 #define D_MAC_DEST_BROADCAST            0xFFFFU
-#define D_MAC_SOURCE_0                  0x4F4DU /* "MO" in ASCII */
-#define D_MAC_SOURCE_1                  0x414EU /* "NA" in ASCII */
-#define D_MAC_SOURCE_2                  0x4F43U /* "CO" in ASCII */
+#define D_MAC_SOURCE_0                  0x4D4FU /* "MO" in ASCII */
+#define D_MAC_SOURCE_1                  0x4E41U /* "NA" in ASCII */
+#define D_MAC_SOURCE_2                  0x434FU /* "CO" in ASCII */
 #define D_ETHERTYPE_IPV4                0x0800U /* Ethertype for IPv4 */
 #define D_IP_VERSION_IHL                0x4500U /* Version 4, IHL 5 (20 bytes) , Default value for DSCP and ECN */
 #define D_IDENTIFICATION                0x1234U /* identification */
@@ -63,7 +65,7 @@
 #define D_UDP_DEST_CMD                  0x1103U /* UDP destination port for commands */
 
 /* Ethernet Descriptors */
-/* Adresses */
+/* Chapters 38.6.7 Tx Configuration  & 38.6.8 Rx Configuration */
 #define D_ADDR_DSC_TX                   0x2004C000U /* Rx Descriptor address */
 #define D_ADDR_DSC_RX                   0x2004C020U /* Tx Descriptor address */
 

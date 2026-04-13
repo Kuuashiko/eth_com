@@ -25,12 +25,14 @@ int32_t NVIC_enable_interrupt(t_NVIC_registers_s *io_NVIC_drv, enum_E_INTERRUPT_
     uint32_t word_index = i_interrupt_id / D_LENGTH_32; 
     uint32_t bit_position = i_interrupt_id % D_LENGTH_32; 
     int status = E_STATUS_OK;
-    if (i_interrupt_id > D_MAX_INTERRUPT_NUMBER) {       
+    if (i_interrupt_id > D_MAX_INTERRUPT_NUMBER) 
+    {       
         status = E_STATUS_ERROR; 
     }
     
 
-    if (status == E_STATUS_OK) { 
+    else 
+    { 
         io_NVIC_drv->ISER[word_index] = (E_BIT_ENABLE << bit_position); 
     }
     return status;

@@ -29,6 +29,7 @@
 
 
 /* MAC mapping*/
+/* MAC register description : 38.8.1*/
 typedef struct MAC_regs {
     uint32_t CR;
     uint32_t FFR;
@@ -56,6 +57,7 @@ typedef struct MAC_regs {
 }t_MAC_regs_s;
 
 /* MMC mapping*/
+/* MMC register description : 38.8.2 */
 typedef struct MMC_regs {
     uint32_t CR;
     uint32_t RIR;
@@ -75,6 +77,7 @@ typedef struct MMC_regs {
 }t_MMC_regs_s;
 
 /* PTP mapping */
+/* TimeStamp registers : 38.8.3 */
 typedef struct PTP_regs {
     uint32_t TSCR;
     uint32_t SSIR;
@@ -90,6 +93,7 @@ typedef struct PTP_regs {
 }t_PTP_regs_s;
 
 /* DMA mapping */
+/* DMA register description : 38.8.4 */
 typedef struct DMA_regs {
     uint32_t BMR;
     uint32_t TPDR;
@@ -109,6 +113,7 @@ typedef struct DMA_regs {
 }t_DMA_regs_s;
 
 /* Mapping of all ETHERNET registers*/
+/* MAC register description : 38.8.5  ( contains full mapping of all sub registers above )*/
 typedef struct ETH_regs {
 	t_MAC_regs_s MAC;
     uint32_t res_1[40];
@@ -121,7 +126,8 @@ typedef struct ETH_regs {
 
 
 
-/* ETH descriptors*/
+/* ETH descriptors */
+/* TX desc config : 38.6.7 */
 typedef struct TX_descriptor {
     uint32_t TDES0;
     uint32_t TDES1;
@@ -129,6 +135,7 @@ typedef struct TX_descriptor {
     uint32_t TDES3;
 }t_TX_descriptor_s;
 
+/* RX desc config : 38.6.8 */
 typedef struct RX_descriptor {
     uint32_t RDES0;
     uint32_t RDES1;
@@ -165,19 +172,22 @@ typedef struct FRAME_ETH {
 
 
 /* enumerates */
-
 typedef enum {
     E_CHKSUM_DISABLE,
     E_CHKSUM_IP_HEADER,
     E_CHKSUM_IP_HEADER_PAYLOAD,
     E_CHKSUM_IP_HEADER_PAYLOAD_PSEUDO_HEADER,
-} e_CHKSM_INS_CTRL;
+} enum_CHKSM_INS_CTRL;
 
 /* public functions prototypes */
 void ETH_conf(t_ETH_regs_s *io_ETH_regs);
 void ETH_set_frame_length(uint32_t i_length_payload);
 void ETH_get_payload(uint8_t o_payload[], uint32_t i_payload_size);
 void ETH_set_payload(uint8_t i_payload[], uint32_t i_payload_size);
+void ETH_set_ip_dest(uint32_t i_ip_dst);
+void ETH_set_ip_src(uint32_t i_ip_src);
+void ETH_set_udp_dest(uint16_t i_udp_dest);
+void ETH_set_udp_src(uint16_t i_udp_src);
 void ETH_set_own_DMA_TX_DESC(void);
 void ETH_send_frame(t_DMA_regs_s *io_DMA);
 uint32_t ETH_get_receive_flag(void);

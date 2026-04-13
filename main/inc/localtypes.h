@@ -46,7 +46,7 @@
 typedef enum BIT_STATE {
     E_BIT_DISABLE,
     E_BIT_ENABLE
-}enum_E_BIT_STATE;
+}enum_BIT_STATE;
 
 typedef enum status {
     E_STATUS_OK = 0,

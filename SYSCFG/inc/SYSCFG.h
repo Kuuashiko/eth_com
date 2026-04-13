@@ -17,7 +17,8 @@
 #define D_RMII_VALUE       1U   
 
 
-/* Struct RCC register map */
+/* Struct SYSCFG register map */
+/* SYSCFG registers 7.2.8 */
 typedef struct SYSCFG_registers {
 	uint32_t SYSCFG_MEMRMP;
 	uint32_t SYSCFG_PMC;

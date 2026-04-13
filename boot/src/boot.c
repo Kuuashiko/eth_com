@@ -41,7 +41,7 @@ void boot(void)
     // init gpio for eth rmii mode
     GPIO_init_ETH(GPIO_Bank);
     
-    // set rmii mode in syscfg
+    // set rmii mode in syscfg must be done before eth clock activation, cf Note in 7.2.2
     SYSCFG_set_RMII_ETH(SYSCFG_map);
     
     //enable clock for mac, tx & rx

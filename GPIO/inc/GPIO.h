@@ -13,6 +13,7 @@
 
 #define D_GPIO_ADDR                    0x40020000U
 
+/* Valid for MODER 6.4.1, OPSPEEDR 6.4.3 & PUPDR 6.4.4 */
 #define D_OFFSET_MODE_SPEED_PUPD0        0U
 #define D_OFFSET_MODE_SPEED_PUPD1        2U
 #define D_OFFSET_MODE_SPEED_PUPD2        4U
@@ -30,6 +31,7 @@
 #define D_OFFSET_MODE_SPEED_PUPD14       28U
 #define D_OFFSET_MODE_SPEED_PUPD15       30U
 
+/* Valid for OTYPER 6.4.2, IDR 6.4.5 & ODR 6.4.6 */
 #define D_OFFSET_OTYPE_IDR_ODR_LOCK0     0U
 #define D_OFFSET_OTYPE_IDR_ODR_LOCK1     1U
 #define D_OFFSET_OTYPE_IDR_ODR_LOCK2     2U
@@ -48,6 +50,7 @@
 #define D_OFFSET_OTYPE_IDR_ODR_LOCK15    15U
 #define D_OFFSET_LCCK                    16U
 
+/* Valid for set/reset 6.4.7*/
 #define D_OFFSET_SET_RESET0              0U
 #define D_OFFSET_SET_RESET1              1U
 #define D_OFFSET_SET_RESET2              2U
@@ -81,6 +84,7 @@
 #define D_OFFSET_SET_RESET30             30U
 #define D_OFFSET_SET_RESET31             31U
 
+/* Valid for alternate function registers 6.4.9 & 6.4.10 */
 #define D_OFFSET_ALTERNATE_FUNCTION0_8   0U 
 #define D_OFFSET_ALTERNATE_FUNCTION1_9   4U
 #define D_OFFSET_ALTERNATE_FUNCTION2_10  8U
@@ -127,6 +131,7 @@ typedef enum alt_func{
 }enum_ALT_FUNCT_mode;
 
 /* Struct GPIOx register map */
+/* 6.4 GPIO registers */
 typedef struct GPIOx_registers {
 	uint32_t MODER;
 	uint32_t OTYPER;

@@ -19,6 +19,7 @@
 #define D_BIT_SYSCFG_reg   0x00004000U /* Bit of SYSCFGEN register in apb2enr register*/
 
 /* Struct RCC register map */
+/* RCC registers 5.3 */
 typedef struct RCC_registers {
 	uint32_t RCC_CR;
 	uint32_t RCC_PLLCFGR;

@@ -17,13 +17,13 @@
 #include "boot.h"
 
 /* command data structure*/
-typedef struct command {
+typedef struct COMMAND {
     uint32_t nb_msg;
     uint32_t delay;
     uint32_t stop;
     }t_COMMAND_s;
 
-typedef struct data {
+typedef struct DATA {
     uint32_t data;
     uint32_t cnt;
 }t_DATA_s;

@@ -94,9 +94,9 @@ void set_header_eth_udp()
     ETH_send->head_eth_udp.mac_dest[0] = D_MAC_DEST_BROADCAST; /* Broadcast MAC address */
     ETH_send->head_eth_udp.mac_dest[1] = D_MAC_DEST_BROADCAST;
     ETH_send->head_eth_udp.mac_dest[2] = D_MAC_DEST_BROADCAST;
-    ETH_send->head_eth_udp.mac_source[0] = D_MAC_SOURCE_0; /* "MO" */
-    ETH_send->head_eth_udp.mac_source[1] = D_MAC_SOURCE_1; /* "NA" */
-    ETH_send->head_eth_udp.mac_source[2] = D_MAC_SOURCE_2; /* "CO" */
+    ETH_send->head_eth_udp.mac_source[0] = M_Swap16(D_MAC_SOURCE_0); /* "MO" */
+    ETH_send->head_eth_udp.mac_source[1] = M_Swap16(D_MAC_SOURCE_1); /* "NA" */
+    ETH_send->head_eth_udp.mac_source[2] = M_Swap16(D_MAC_SOURCE_2); /* "CO" */
     ETH_send->head_eth_udp.protocol = M_Swap16(D_ETHERTYPE_IPV4); /* Ethertype for IPv4 */
     ETH_send->head_eth_udp.ihl_dsc_esn = M_Swap16(D_IP_VERSION_IHL); /* Version 4, IHL 5 (20 bytes) , Default value for DSCP and ECN */
     ETH_send->head_eth_udp.total_length = 0; /* Updated later */
@@ -104,10 +104,10 @@ void set_header_eth_udp()
     ETH_send->head_eth_udp.flags_offset = M_Swap16(D_FLAGS_OFFSET); /* Don't fragment flag */
     ETH_send->head_eth_udp.ttl_prot_ip = M_Swap16(D_TTL_PROT_IP); /* Time to live & Protocol number for UDP*/
     ETH_send->head_eth_udp.header_checksum = 0; /* Compute by MAC */
-    ETH_send->head_eth_udp.ip_src = M_Swap32(D_IP_SRC); /* Example source IP:*/
-    ETH_send->head_eth_udp.ip_dest = M_Swap32(D_IP_DEST); /* Example destination IP: */
-    ETH_send->head_eth_udp.udp_src = M_Swap16(D_UDP_SRC); /* Example source port */
-    ETH_send->head_eth_udp.udp_dest = M_Swap16(D_UDP_DST); /* Example destination port */
+    ETH_send->head_eth_udp.ip_src = 0; /* Updated by user */
+    ETH_send->head_eth_udp.ip_dest = 0; /* Updated by user */
+    ETH_send->head_eth_udp.udp_src = 0; /* Updated by user */
+    ETH_send->head_eth_udp.udp_dest = 0; /* Updated by user */
     ETH_send->head_eth_udp.length = 0; /* Updated later */
     ETH_send->head_eth_udp.checksum = 0; /* Compute by MAC */
 }   
@@ -203,6 +203,69 @@ void ETH_get_payload(uint8_t o_payload[], uint32_t i_payload_size)
     frame_received = 0;
 }
 
+/** 
+* @brief ETH_set_ip_dest                                 
+* 
+* - Set the ip dest in ethernet header.                                 
+*                                                      
+*  
+* @param[in] i_ip_dst : Ip destination 
+*                                                                               
+*                                                      
+* @return void                           
+**/ 
+void ETH_set_ip_dest(uint32_t i_ip_dst)
+{
+    ETH_send->head_eth_udp.ip_dest = M_Swap32(i_ip_dst);
+}
+
+/** 
+* @brief ETH_set_ip_src                                 
+* 
+* - Set the ip source in ethernet header.                                 
+*                                                      
+*  
+* @param[in] i_ip_src : Ip source 
+*                                                                               
+*                                                      
+* @return void                           
+**/ 
+void ETH_set_ip_src(uint32_t i_ip_src)
+{
+    ETH_send->head_eth_udp.ip_src = M_Swap32(i_ip_src);
+}
+
+/** 
+* @brief ETH_set_udp_dest                                
+* 
+* - Set the udp dest in ethernet header.                                 
+*                                                      
+*  
+* @param[in] i_udp_dest : Udp dest 
+*                                                                               
+*                                                      
+* @return void                           
+**/ 
+void ETH_set_udp_dest(uint16_t i_udp_dest)
+{
+    ETH_send->head_eth_udp.udp_dest = M_Swap16(i_udp_dest);
+}   
+
+/** 
+* @brief ETH_set_udp_src                                
+* 
+* - Set the udp src in ethernet header.                                 
+*                                                      
+*  
+* @param[in] i_udp_src : Udp src 
+*                                                                               
+*                                                      
+* @return void                           
+**/ 
+void ETH_set_udp_src(uint16_t i_udp_src)
+{
+    ETH_send->head_eth_udp.udp_src = M_Swap16(i_udp_src);
+}
 
 /** 
 * @brief ETH_set_own_DMA_TX_DESC                                 
@@ -275,7 +338,7 @@ uint32_t ETH_get_receive_flag(void)
 void ETH_IRQHandler(void)
 {
     t_ETH_regs_s *ETH_map = (t_ETH_regs_s *)D_ETH_ADDR;
-    ETH_map->DMA.SR = ( E_BIT_ENABLE << D_OFFSET_RS_DMAOMR ); /* Clear the receive flag */
+    ETH_map->DMA.SR |= ( E_BIT_ENABLE << D_OFFSET_RS_DMAOMR ); /* Clear the receive flag */
     if (M_Swap16(ETH_receive->head_eth_udp.udp_dest) == D_UDP_DEST_CMD)
     {
         frame_received=1;

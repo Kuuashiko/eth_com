@@ -21,9 +21,14 @@ int main()
 
     boot();
 
+    ETH_set_ip_src(D_IP_SRC); /* Set source IP  */
+    ETH_set_ip_dest(D_IP_DEST); /* Set destination IP  */
+    ETH_set_udp_src(D_UDP_SRC); /* Set UDP src  */
+    ETH_set_udp_dest(D_UDP_DST); /* Set UDP dst */
     ETH_set_payload((uint8_t*)&data_to_send ,sizeof(t_DATA_s));
     ETH_set_frame_length(sizeof(t_DATA_s)); /* Set the frame length in the Ethernet header and TDES1 */
     memset(&command, 0x00, sizeof(t_COMMAND_s));
+
     
 
     while (1)

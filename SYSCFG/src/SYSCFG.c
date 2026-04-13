@@ -15,7 +15,7 @@
 /**
  * @brief SYSCFG_set_RMII_ETH
  * 
- * - set the eth config in RMII mode, must be done before eth activation
+ * - set the eth config in RMII mode, must be done before eth activation, cf Note in 7.2.2
  * 
  * @param [in,out] io_SYSCFG_regs : pointer to SYSCFG registers
  * 
