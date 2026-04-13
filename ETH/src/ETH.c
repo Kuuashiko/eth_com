@@ -172,7 +172,11 @@ void ETH_set_frame_length(uint32_t i_length_payload)
 **/ 
 void ETH_set_payload(uint8_t i_payload[], uint32_t i_payload_size)
 {
-    memcpy(ETH_send->payload, i_payload,i_payload_size);
+    if (i_payload != NULL )
+    {
+        memcpy(ETH_send->payload, i_payload,i_payload_size);
+    }
+    
 }
 
 /** 
@@ -188,19 +192,23 @@ void ETH_set_payload(uint8_t i_payload[], uint32_t i_payload_size)
 **/ 
 void ETH_get_payload(uint8_t o_payload[], uint32_t i_payload_size)
 {
-    memcpy(o_payload, payload_save,i_payload_size);// copy buffer saved into app buffer
-    
-    memset(payload_save, 0x00, sizeof(payload_save));// flush rx buffer save
-
-    
-    uint32_t *end_addr = (uint32_t *)(o_payload + i_payload_size);
-    /* swap buffer endianness by 32 bits words */
-    for (uint32_t *curr_pos = (uint32_t *)o_payload; curr_pos < end_addr; curr_pos++)
+    if (o_payload != NULL )
     {
-        *curr_pos = M_Swap32(*curr_pos);
+        memcpy(o_payload, payload_save,i_payload_size);// copy buffer saved into app buffer
+        
+        memset(payload_save, 0x00, sizeof(payload_save));// flush rx buffer save
+    
+        
+        uint32_t *end_addr = (uint32_t *)(o_payload + i_payload_size);
+        /* swap buffer endianness by 32 bits words */
+        for (uint32_t *curr_pos = (uint32_t *)o_payload; curr_pos < end_addr; curr_pos++)
+        {
+            *curr_pos = M_Swap32(*curr_pos);
+        }
+        // set rcv flag back to 0
+        frame_received = 0;
     }
-    // set rcv flag back to 0
-    frame_received = 0;
+
 }
 
 /** 
