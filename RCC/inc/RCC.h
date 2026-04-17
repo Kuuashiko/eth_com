@@ -23,7 +23,7 @@
 #define D_HSERDY_CR            D_BIT_17 /* HSERDY bit in RCC_CR */
 
 #define D_OFFSET_HSERDY        17U
-#define D_OFFSET_HSEON         17U
+#define D_OFFSET_HSEON         16U
 
 /* 5.3.2 RCC_CFGR register */
 #define D_MASK_SW              0x00000003U
