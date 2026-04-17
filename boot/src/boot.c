@@ -25,6 +25,8 @@ void boot(void)
     t_ETH_regs_s *ETH_map = (t_ETH_regs_s *)D_ETH_ADDR;
     t_NVIC_registers_s *NVIC_map = (t_NVIC_registers_s *)D_NVIC_ADDR;
     
+    // Configure system clock on HSE
+    RCC_enable_HSE_clock(RCC_map);
 
     // Configure gpio banks for eth rmii
     RCC_enable_gpio_clock(RCC_map, E_GPIOA); /* Enable GPIOA, GPIOC & GPIOG clock */

@@ -94,25 +94,57 @@ void TIMER_reset(t_TIMERx_registers_s *io_TIMx)
 * - Compute the prescaler value for the timer to have 100 ticks per desired period (D_PERIOD_TICKS) in microseconds
 * - The timer clock frequency is 16 MHz, and the timer frequency is clock_freq / (prescaler + 1),
 * so the prescaler is ((clock_freq * i_period_us) / (D_PERIOD_TICKS) ) - 1U. 
+* - If the input period is higher than 100 ms, the prescaler is set to the value for which 1 tick = 1 ms, so the prescaler is
+* ((clock_freq * D_100_MS) / (D_PERIOD_TICKS) ) - 1U and the user period input is used as reference to compute the tick period in ms.
 * 
-* @param[in] i_period_us : pointer in frame sent by the user in microseconds
-* @param[out] o_prescaler : pointer to the computed prescaler value will be stored
+* @param[in] i_period_us : period in frame sent by the user in microseconds
+* @param[out] o_prescaler : pointer to the computed prescaler value
 *                                                                                           
 *                                                      
-* @return status : 0 if successfully, -1 if the input period is < 100 us  because clock is unstable                                
+* @return status : 0 if successfully, -1 if the input period is < 100 us  because clock is unstable                            
 **/ 
 int32_t TIMER_compute_prescaler(uint32_t i_period_us, uint32_t *o_prescaler)
 {
     int32_t status = E_STATUS_OK;
-    if (i_period_us < D_PERIOD_TICKS)
+
+    if (i_period_us < D_PERIOD_TICKS_MS)
     {
+        *o_prescaler = D_RESET_VALUE; /* Set prescaler to 0 an return an error */
         status = E_STATUS_ERROR; /* Invalid period */
     }
     
-    if (status == E_STATUS_OK)
+    else if (i_period_us <= D_100_MS)
     {
-        *o_prescaler = ( (D_TIMER_CLOCK_FREQ * i_period_us) / D_PERIOD_TICKS ) - 1U; /* Calculate the prescaler value for the desired period in microseconds for 100 ticks */
+        *o_prescaler = ( (D_TIMER_CLOCK_FREQ * i_period_us) / D_PERIOD_TICKS_US ) - 1U;
+    }
+
+    else
+    {
+        *o_prescaler = ( (D_TIMER_CLOCK_FREQ * D_100_MS) / D_PERIOD_TICKS_MS ) - 1U;
     }
 
     return status;
+}
+
+/**
+ * @brief Timer_get_tick_period 
+ * 
+ * - Get the period in ticks to be used, user input converted in ms if period > 100 ms, 100 ticks otherwise
+ * 
+ * @param[in] i_period_us : period in frame sent by the user in microseconds
+ * @param[out] o_tick_period : pointer to the computed tick period value 
+ * 
+ * @return void
+ */
+void TIMER_get_tick_period(uint32_t i_period_us, uint32_t *o_tick_period)
+{
+        if (i_period_us > D_100_MS)
+	    {
+	    	*o_tick_period = i_period_us/D_US2MS;
+	    }
+    
+	    else
+	    {
+	    	*o_tick_period = D_PERIOD_TICKS_US;
+	    }
 }

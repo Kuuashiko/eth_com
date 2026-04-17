@@ -12,8 +12,12 @@
 /* Locals Constants */
 
 #define D_TIMER_ADDR                    0x40000000U /* Base adress of Timer registers*/
-#define D_PERIOD_TICKS                  100U /* Number of timer ticks for the desired period in microseconds */
-#define D_TIMER_CLOCK_FREQ              16U /* Timer clock frequency in MHz */
+#define D_PERIOD_TICKS_MS               100U /* Number of timer ticks for the desired period in microseconds */
+#define D_PERIOD_TICKS_US               1000U /* Number of timer ticks for the desired period in microseconds */
+#define D_MAX_PERIOD_100_T              100000U /* Value for which 1 tick = 1 ms, set the prescaler limit for 1 tick = 1 ms and set user period input as reference */
+#define D_TIMER_CLOCK_FREQ              25U /* HSE Timer clock frequency in MHz */
+#define D_US2MS                         1000U /* value to set us in ms */
+#define D_100_MS                        100000U /* 100 ms in microseconds */
 #define D_CEN_BIT                       0x00000001U /* Bit for start/stop Timer in CR1*/
 #define D_RESET_VALUE                   0U
 #define D_BIT_UG                        D_BIT_0
@@ -60,5 +64,6 @@ void TIMER_start(t_TIMERx_registers_s *io_TIMx);
 void TIMER_reset(t_TIMERx_registers_s *io_TIMx);
 uint32_t TIMER_get_value(t_TIMERx_registers_s *io_TIMx);
 int32_t TIMER_compute_prescaler(uint32_t i_period_us, uint32_t *o_prescaler);
+void TIMER_get_tick_period(uint32_t i_period_us, uint32_t *o_tick_period);
 
 #endif /* INC_RCC_H_ */

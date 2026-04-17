@@ -56,7 +56,7 @@ void RCC_enable_gpio_clock(t_RCC_registers_s *io_RCC_drv,enum_GPIO_x i_gpio)
  **/
 void RCC_enable_SYSCFG_clock(t_RCC_registers_s *io_RCC_drv)
 {
-	io_RCC_drv->RCC_APB2ENR |= D_BIT_SYSCFG_reg;
+	io_RCC_drv->RCC_APB2ENR |= D_BIT_SYSCFG_APB2ENR;
 }
 
 
@@ -74,4 +74,34 @@ void RCC_enable_SYSCFG_clock(t_RCC_registers_s *io_RCC_drv)
 void RCC_enable_timer_clock(t_RCC_registers_s *io_RCC_drv, enum_TIMER_x i_timer_x)
 {
 	io_RCC_drv->RCC_APB1ENR |= i_timer_x & D_MASK_TIMER_x;
+}
+
+/**
+ * @brief RCC_enable_HSE_clock
+ * 
+ * - Enable HSE and set system frequency to HSE clock instead of default HSI clock
+ * 
+ * @param [in,out] io_RCC_drv : pointer to RCC registers
+ * 
+ * @return void
+ */
+void RCC_enable_HSE_clock(t_RCC_registers_s *io_RCC_drv)
+{
+	io_RCC_drv->RCC_CR |= D_HSEON_CR;
+
+	/* wait for HSE to be ready */
+
+	while (((io_RCC_drv->RCC_CR & D_HSERDY_CR ) >> D_OFFSET_HSERDY ) == E_BIT_DISABLE)
+	{
+		// Wait HSERDY to be up
+	}
+
+	io_RCC_drv->RCC_CFGR = E_HSE << D_OFFSET_SW_CFGR;
+
+	while (((io_RCC_drv->RCC_CFGR & D_MASK_SWS) >> D_OFFSET_SWS_CFGR) != E_HSE )
+	{
+		// wait for system to switch on HSE clock 
+	}
+
+	io_RCC_drv->RCC_CR &= ~D_HSION_CR; // disable hsi
 }
